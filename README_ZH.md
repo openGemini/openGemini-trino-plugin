@@ -2,31 +2,31 @@
 
 # trino-openGemini-plugin
 
-This project is a plug-in for the distributed SQL engine Trino. With this plug-in, you can use Trino directly to access openGemini.
+trino-openGemini-plugin是分布式SQL引擎Trino的一个插件，通过该插件，您可以直接使用Trino访问openGemini。
 
-## Quick start
+## 安装部署
 
-Please refer to the [Deploying Trino—Trino 399 Documentation](https://trinodb.github.io/docs.trino.io/399/installation/deployment.html). The following is a deployment example based on Ubuntu 24.04, Java 17.0.11, and Python 3.12.3.
+参照[Deploying Trino — Trino 399 Documentation](https://trinodb.github.io/docs.trino.io/399/installation/deployment.html)，以下是基于`Ubuntu24.04`、`Java 17.0.11`和`Python 3.12.3`的部署实例。
 
-1. Download [trino-server-399.tar.gz](https://repo1.maven.org/maven2/io/trino/trino-server/399/trino-server-399.tar.gz), and unzip.
+1. 下载trino的二进制包 [trino-server-399.tar.gz](https://repo1.maven.org/maven2/io/trino/trino-server/399/trino-server-399.tar.gz)，并解压
 
    ```bash
    $ tar xf trino-server-399.tar.gz
    ```
 
-2. Unzip `trino-opengemini-399.zip`. You can compile `trino-opengemini-399.zip` yourself, or [download](https://github.com/openGemini/openGemini-trino-plugin/releases/tag/v0.1.0) the pre-compiled `trino-opengemini-399.zip`.
+2. 解压`trino-opengemini-399.zip`文件, 可以自己编译，也可以在[下载](https://github.com/openGemini/openGemini-trino-plugin/releases/tag/v0.1.0)已经编译好的。
 
    ```bash
    $ unzip trino-opengemini-399.zip
    ```
 
-3. Put `trino-opengemini` in the `plugin` directory of trino-server and rename it to opengemini
+3. 将trino-opengemini放到trino-server的plugin目录下，并重命名为`opengemini`
 
    ```bash
    $ mv trino-opengemini-399 trino-server-399/plugin/opengemini
    ```
 
-4. Config `trino-server-399/etc/config.properties` (For Reference Only)
+4. 参照如下内容配置`trino-server-399/etc/config.properties`
 
    ```toml
    coordinator=true
@@ -35,7 +35,7 @@ Please refer to the [Deploying Trino—Trino 399 Documentation](https://trinodb.
    discovery.uri=http://localhost:8080
    ```
 
-5. Config `trino-server-399/etc/jvm.config` (For Reference Only)
+5. 参照如下内容配置`trino-server-399/etc/jvm.config` (仅做参考)
 
    ```toml
    -server
@@ -57,13 +57,13 @@ Please refer to the [Deploying Trino—Trino 399 Documentation](https://trinodb.
    -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
    ```
 
-6. Config `trino-server-399/etc/log.properties`
+6. 参照如下内容配置`trino-server-399/etc/log.properties`
 
    ```bash
    io.trino=INFO
    ```
 
-7. Config `trino-server-399/etc/node.properties`
+7. 参照如下内容配置`trino-server-399/etc/node.properties`
 
    ```bash
    node.environment=test
@@ -71,7 +71,7 @@ Please refer to the [Deploying Trino—Trino 399 Documentation](https://trinodb.
    node.data-dir=/tmp/trino/logs
    ```
 
-8. Config opengemini catalog，The following is an example:
+8. 配置opengemini的catalog，示例如下
 
    ```bash
    $ mkdir etc/catalog
@@ -82,15 +82,15 @@ Please refer to the [Deploying Trino—Trino 399 Documentation](https://trinodb.
    opengemini.connect.timeout=300s" > etc/catalog/opengemini.properties
    ```
 
-## Start trino server
+## 运行trino server，加载openGemini插件
 
-Use `bin/launcher` to start `trino` server
+使用`bin/launcher`启动`trino`服务
 
 ```bash
 $ bin/launcher start
 ```
 
-The service log is similar to the following when successful: 
+如果启动成功后，服务日志类似如下
 
 ```bash
 $ tail -30 /tmp/trino/logs/var/log/server.log
@@ -127,15 +127,15 @@ $ tail -30 /tmp/trino/logs/var/log/server.log
 
 ```
 
-## How to query from openGemini
+## 如何从openGemini查询数据
 
-1. Download trino cli [trino-cli-399-executable.jar](https://repo1.maven.org/maven2/io/trino/trino-cli/399/trino-cli-399-executable.jar)，and make it executable
+1. 下载trino cli，[trino-cli-399-executable.jar](https://repo1.maven.org/maven2/io/trino/trino-cli/399/trino-cli-399-executable.jar)，并赋予可执行权限
 
    ```bash
    $ chmod +x trino-cli-399-executable.jar
    ```
 
-2. Connect trino server. The openGemini needs to run before.
+2. 连接trino server并使用（已经搭建了openGemini，并提供了前文中opengemini.connect.endpoint配置的监听地址，以及opengemini.connect.username和opengemini.connect.password）
 
    ```bash
    $ ./trino-cli-399-executable.jar 
@@ -211,29 +211,29 @@ $ tail -30 /tmp/trino/logs/var/log/server.log
    trino:stress>
    ```
 
-## Compile trino-openGemin
+## 编译
 
-As a trino plugin, `trino-openGemin` wants to depend on `trino` when compiling. Taking the `trino-399` version as an example, the compilation steps are as follows: 
+trino-openGemin作为trino的一个plugin，编译时需要依赖trino。以`trino-399`版本为例，编译步骤如下。
 
-1. Download [trino-399](https://github.com/trinodb/trino/archive/refs/tags/399.zip) source code and unzip
+1. 下载trino源码 [trino-399](https://github.com/trinodb/trino/archive/refs/tags/399.zip)，并解压
 
    ```bash
    $ unzip trino-399.zip
    ```
 
-2. Download trino-openGemini code from `https://github.com/openGemini/openGemini-trino-plugin/archive/refs/heads/main.zip`
+2. 下载trino-openGemini源码 [openGemini-trino](https://github.com/openGemini/openGemini-trino-plugin/archive/refs/heads/main.zip)，并解压
 
    ```bash
    $ unzip openGemini-trino-plugin-main.zip
    ```
 
-3. Move `trino-openGemini under` plugin，and rename `openGemini-trino-plugin-main` to `trino-opengemini`
+3. 将trino-openGemini源码放到trino源码目录的`plugin`目录下，并重命名为`trino-opengemini`
 
    ```bash
    $ mv openGemini-trino-plugin-main trino-399/plugin/trino-opengemini
    ```
 
-4. Add configuration `<module>plugin/trino-opengemini</module>` in `trino-399/pom.xml` file
+4. 将`<module>plugin/trino-opengemini</module>`添加到`trino-399/pom.xml`文件中
 
    ```bash
    <modules>
@@ -243,7 +243,7 @@ As a trino plugin, `trino-openGemin` wants to depend on `trino` when compiling. 
    </modules>
    ```
 
-5. If the compilation process involves license, git and test checks, you can add the following content to trino-399/plugin/trino-opengemini/pom.xml
+5. 编译过程中如果涉及到`license`、`git`和`test`的检查，可以将如下内容添加到`trino-399/plugin/trino-opengemini/pom.xml`中
 
    ```bash
    <build>
@@ -278,9 +278,9 @@ As a trino plugin, `trino-openGemin` wants to depend on `trino` when compiling. 
    </build>
    ```
 
-6. Complie `trino-opengemini`, refer to [trino-399 README](https://github.com/trinodb/trino/tree/399)，take IntelliJ IDEA, Java 17.0.4 and Maven 3.6.3 as an example:
+6. 编译`trino-opengemini`；参考 [trino-399 README](https://github.com/trinodb/trino/tree/399)，以下是使用`IntelliJ IDEA`、`Java 17.0.4`和`Maven 3.6.3`编译的结果
 
-   ![image](/Users/xiangyu/Documents/openGemini/trino-openGemini-plugin/images/openGemini-trino.png)
+   ![image](./images/openGemini-trino.png)
 
-7. As shown in the above figure, the trino-399/plugin/trino-opengemini/target/trino-opengemini-399.zip generated by installation is the file required for trino to run.
+7. 如上述步骤图中所示，`install`生成的`trino-399/plugin/trino-opengemini/target/trino-opengemini-399.zip`就是后面运行所需要的文件
 
